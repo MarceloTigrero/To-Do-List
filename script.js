@@ -4,92 +4,54 @@ const taskList = document.getElementById('task-list');
 const downloadBtn = document.getElementById('download-btn');
 const downloadCsvBtn = document.getElementById('download-csv-btn');
 
-let tasks = [];
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-function loadTasks() {
-    fetch('/tasks')
-        .then(response => response.json())
-        .then(data => {
-            tasks = data.tasks;
-            renderTasks();
-        })
-        .catch(error => console.error('Error loading tasks:', error));
-}
-
-function addTask() {
-    const taskText = taskInput.value.trim();
-    if (taskText) {
-        const newTask = {
-            id: Date.now().toString(),
-            text: taskText,
-            completed: false,
-            timestamp: new Date().toISOString()
-        };
-        fetch('/tasks', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ task: newTask }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            tasks = data.tasks;
-            renderTasks();
-            taskInput.value = '';
-        })
-        .catch(error => console.error('Error adding task:', error));
-    }
-}
-
-function toggleTask(taskId) {
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-        task.completed = !task.completed;
-        fetch(`/tasks/${taskId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ completed: task.completed }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            tasks = data.tasks;
-            renderTasks();
-        })
-        .catch(error => console.error('Error updating task:', error));
-    }
-}
-
-function deleteTask(taskId) {
-    fetch(`/tasks/${taskId}`, {
-        method: 'DELETE',
-    })
-    .then(response => response.json())
-    .then(data => {
-        tasks = data.tasks;
-        renderTasks();
-    })
-    .catch(error => console.error('Error deleting task:', error));
+function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 function renderTasks() {
     taskList.innerHTML = '';
-    tasks.forEach((task) => {
+    tasks.forEach((task, index) => {
         const li = document.createElement('li');
         li.className = `list-group-item ${task.completed ? 'completed' : ''}`;
         li.innerHTML = `
             <span>${task.text}</span>
             <div>
-                <button class="btn ${task.completed ? 'checked-btn' : 'btn-primary'}" onclick="toggleTask('${task.id}')">
+                <button class="btn ${task.completed ? 'checked-btn' : 'btn-primary'}" onclick="toggleTask(${index})">
                     ${task.completed ? 'Desmarcar' : 'Completar'}
                 </button>
-                <button class="btn btn-danger" onclick="deleteTask('${task.id}')">Borrar</button>
+                <button class="btn btn-danger" onclick="deleteTask(${index})">Borrar</button>
             </div>
         `;
         taskList.appendChild(li);
     });
+}
+
+function addTask() {
+    const taskText = taskInput.value.trim();
+    if (taskText) {
+        tasks.push({
+            text: taskText,
+            completed: false,
+            timestamp: new Date().toISOString()
+        });
+        saveTasks();
+        renderTasks();
+        taskInput.value = '';
+    }
+}
+
+function toggleTask(index) {
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks();
+    renderTasks();
+}
+
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    saveTasks();
+    renderTasks();
 }
 
 function downloadTasks() {
@@ -125,14 +87,4 @@ addTaskBtn.addEventListener('click', addTask);
 downloadBtn.addEventListener('click', downloadTasks);
 downloadCsvBtn.addEventListener('click', downloadCsv);
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => {
-            console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch(error => {
-            console.error('Service Worker registration failed:', error);
-        });
-}
-
-loadTasks();
+renderTasks();
