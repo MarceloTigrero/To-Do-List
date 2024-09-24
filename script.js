@@ -4,55 +4,92 @@ const taskList = document.getElementById('task-list');
 const downloadBtn = document.getElementById('download-btn');
 const downloadCsvBtn = document.getElementById('download-csv-btn');
 
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasks = [];
+
+function loadTasks() {
+    fetch('/tasks')
+        .then(response => response.json())
+        .then(data => {
+            tasks = data.tasks;
+            renderTasks();
+        })
+        .catch(error => console.error('Error loading tasks:', error));
+}
 
 function addTask() {
     const taskText = taskInput.value.trim();
     if (taskText) {
         const newTask = {
+            id: Date.now().toString(),
             text: taskText,
             completed: false,
             timestamp: new Date().toISOString()
         };
-        tasks.push(newTask);
-        saveTasks();
-        renderTasks();
-        taskInput.value = '';
+        fetch('/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ task: newTask }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            tasks = data.tasks;
+            renderTasks();
+            taskInput.value = '';
+        })
+        .catch(error => console.error('Error adding task:', error));
     }
+}
+
+function toggleTask(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.completed = !task.completed;
+        fetch(`/tasks/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ completed: task.completed }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            tasks = data.tasks;
+            renderTasks();
+        })
+        .catch(error => console.error('Error updating task:', error));
+    }
+}
+
+function deleteTask(taskId) {
+    fetch(`/tasks/${taskId}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+        tasks = data.tasks;
+        renderTasks();
+    })
+    .catch(error => console.error('Error deleting task:', error));
 }
 
 function renderTasks() {
     taskList.innerHTML = '';
-    tasks.forEach((task, index) => {
+    tasks.forEach((task) => {
         const li = document.createElement('li');
         li.className = `list-group-item ${task.completed ? 'completed' : ''}`;
         li.innerHTML = `
             <span>${task.text}</span>
             <div>
-                <button class="btn ${task.completed ? 'checked-btn' : 'btn-primary'}" onclick="toggleTask(${index})">
+                <button class="btn ${task.completed ? 'checked-btn' : 'btn-primary'}" onclick="toggleTask('${task.id}')">
                     ${task.completed ? 'Desmarcar' : 'Completar'}
                 </button>
-                <button class="btn btn-danger" onclick="deleteTask(${index})">Borrar</button>
+                <button class="btn btn-danger" onclick="deleteTask('${task.id}')">Borrar</button>
             </div>
         `;
         taskList.appendChild(li);
     });
-}
-
-function toggleTask(index) {
-    tasks[index].completed = !tasks[index].completed;
-    saveTasks();
-    renderTasks();
-}
-
-function deleteTask(index) {
-    tasks.splice(index, 1);
-    saveTasks();
-    renderTasks();
-}
-
-function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 function downloadTasks() {
@@ -70,8 +107,8 @@ function downloadTasks() {
 
 function downloadCsv() {
     const header = 'Tarea,Completada,Fecha y Hora\n';
-    const csvContent = tasks.map(task => 
-        `"${task.text}",${task.completed ? 'Sí' : 'No'},"${new Date(task.timestamp).toLocaleString()}"`
+    const csvContent = tasks.map(task =>
+        `"${task.text}",${task.completed ? 'Si' : 'No'},"${new Date(task.timestamp).toLocaleString()}"`
     ).join('\n');
     const blob = new Blob([header + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -98,4 +135,4 @@ if ('serviceWorker' in navigator) {
         });
 }
 
-renderTasks();
+loadTasks();
