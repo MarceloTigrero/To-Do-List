@@ -55,3 +55,7 @@ Our To-Do-List application is designed to work seamlessly across different devic
 *To-Do-List on desktop browsers*
 
 The responsive design ensures a consistent and user-friendly experience whether you're managing your tasks on the go or from your desktop.
+
+## Author
+
+This project is part of the portfolio of [Marcelo Tigrero](https://marcelotigrero.github.io/Portafolio/), Mechatronics Engineer.
