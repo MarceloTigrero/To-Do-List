@@ -1,67 +1,57 @@
-Clase 1: Introducción a los lenguajes interpretados demostrativa
-# To-Do-List
-Es una lista de pendientes, es decir, una enumeración de tareas a cumplir en cierto periodo de tiempo, con prioridades y cronogramas tentativos.
+# To-Do-List Application
 
-**Título:** Lenguajes Interpretados
+![To-Do-List Logo](todo-list-logo.png)
 
-**Objetivos:**
 
-* Entender qué son los lenguajes interpretados y cómo funcionan.
-* Aprender a escribir código en un lenguaje interpretado.
-* Entender las estructuras de control y las funciones en un lenguaje interpretado.
+## Overview
 
-**Materiales:**
+This To-Do-List application is a simple yet powerful task management tool designed to help users organize their daily activities efficiently.
 
-* Un computador con conexión a Internet.
-* Un editor de texto (como Notepad++ o Sublime Text).
-* Un navegador web (como Google Chrome o Mozilla Firefox).
+## Technologies Used
 
-**Estructura de la clase:**
+- ![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+- ![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+- ![Express.js](https://img.shields.io/badge/-Express.js-000000?style=flat-square&logo=express&logoColor=white)
+- ![JSON](https://img.shields.io/badge/-JSON-000000?style=flat-square&logo=json&logoColor=white)
 
-I. Introducción (5 minutos)
+## Programming Paradigms
 
-* Definir qué son los lenguajes interpretados y cómo se diferencian de los lenguajes compilados.
-* Mostrar un ejemplo de un lenguaje interpretado (como JavaScript).
+- Object-Oriented Programming (OOP)
+- Functional Programming
+- Asynchronous Programming
 
-II. Secuencias de comandos (15 minutos)
+## Problem Solved
 
-* Mostrar cómo se escriben las secuencias de comandos en un lenguaje interpretado (como JavaScript).
-* Ejemplos de secuencias de comandos:
-	+ `const variable = valor;`
-	+ `console.log("Hola, mundo!");`
-	+ `document.getElementById("elemento").innerHTML = "Nuevo texto";`
+This application addresses the common challenge of task management and organization. It provides a digital solution for creating, updating, and tracking tasks, replacing traditional paper-based to-do lists.
 
-III. Estructuras de control (20 minutos)
+## How to Use
 
-* Mostrar cómo se utilizan las estructuras de control en un lenguaje interpretado (como JavaScript).
-* Ejemplos de estructuras de control:
-	+ `if (condición) { ... }`
-	+ `if (condición) { ... } else { ... }`
-	+ `switch (variable) { ... }`
+1. Clone the repository
+2. Install dependencies: 
+   ```bash
+   npm install
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
 
-IV. Funciones (20 minutos)
+4. Open your browser and navigate to http://localhost:3000
 
-* Mostrar cómo se definen y se utilizan las funciones en un lenguaje interpretado (como JavaScript).
-* Ejemplos de funciones:
-	+ `function suma(a, b) { return a + b; }`
-	+ `function saludar(nombre) { console.log("Hola, " + nombre + "!"); }`
+## Live Demo
 
-V. Ejercicios (20 minutos)
+You can try out the To-Do-List application directly from your browser:
 
-* Proporcionar ejercicios para que los estudiantes practiquen lo que han aprendido.
-* Ejemplos de ejercicios:
-	+ Escribir un programa que imprima "Hola, mundo!" en la consola.
-	+ Crear una función que sume dos números y devuelva el resultado.
-	+ Crear un programa que cambie el texto de un elemento HTML.
+[https://marcelotigrero.github.io/To-Do-List/](https://marcelotigrero.github.io/To-Do-List/)
 
-VI. Conclusión (5 minutos)
+## Responsive Design
 
-* Resumen de los conceptos aprendidos.
-* Preguntas y respuestas.
+Our To-Do-List application is designed to work seamlessly across different devices:
 
-**Evaluación:**
+![Mobile View](todo-list-mobile.png)
+*To-Do-List on mobile devices*
 
-* Evaluación oral o escrita sobre los conceptos aprendidos.
-* Evaluación de los ejercicios practicados.
+![Web View](todo-list-web.png)
+*To-Do-List on desktop browsers*
 
-Espero que esta estructura te sea útil. ¡Si tienes alguna pregunta o necesitas ayuda adicional, no dudes en preguntar!
+The responsive design ensures a consistent and user-friendly experience whether you're managing your tasks on the go or from your desktop.
