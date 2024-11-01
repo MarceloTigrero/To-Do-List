@@ -4,8 +4,10 @@
   "description": "To-Do List with multi-tab sync",
   "main": "index.html",
   "scripts": {
-    "deploy": "gh-pages -d .",
-    "start": "serve ."
+    "clean": "rimraf build",
+    "prebuild": "npm run clean",
+    "build": "mkdir build && cp *.{html,css,js} build/",
+    "deploy": "gh-pages -d build"
   },
   "homepage": "https://marcelotigrero.github.io/To-Do-List",
   "keywords": [],
@@ -15,6 +17,7 @@
     "serve": "^14.2.1"
   },
   "devDependencies": {
-    "gh-pages": "^6.0.0"
+    "gh-pages": "^6.2.0",
+    "rimraf": "^6.0.1"
   }
 }
