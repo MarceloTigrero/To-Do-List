@@ -16,7 +16,7 @@ This To-Do-List application is a simple yet powerful task management tool design
 
 ## Programming Paradigms
 
-- Object-Oriented Programming (OOP)
+- Object-Oriented Programming  (OOP)
 - Functional Programming
 - Asynchronous Programming
 
