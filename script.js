@@ -15,65 +15,83 @@ function loadTasks() {
         })
         .catch(error => console.error('Error loading tasks:', error));
 }
+  // Create a broadcast channel
+  const todoChannel = new BroadcastChannel('todo-sync');
 
-function addTask() {
-    const taskText = taskInput.value.trim();
-    if (taskText) {
-        const newTask = {
-            id: Date.now().toString(),
-            text: taskText,
-            completed: false,
-            timestamp: new Date().toISOString()
-        };
-        fetch('/tasks', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ task: newTask }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            tasks = data.tasks;
-            renderTasks();
-            taskInput.value = '';
-        })
-        .catch(error => console.error('Error adding task:', error));
-    }
-}
+  // Listen for messages from other tabs
+  todoChannel.onmessage = (event) => {
+      if (event.data.type === 'update') {
+          loadTasks(); // Refresh the task list
+      }
+  };
 
-function toggleTask(taskId) {
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-        task.completed = !task.completed;
-        fetch(`/tasks/${taskId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ completed: task.completed }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            tasks = data.tasks;
-            renderTasks();
-        })
-        .catch(error => console.error('Error updating task:', error));
-    }
-}
+  // Function to broadcast changes
+  function broadcastUpdate() {
+      todoChannel.postMessage({
+          type: 'update'
+      });
+  }
 
-function deleteTask(taskId) {
-    fetch(`/tasks/${taskId}`, {
-        method: 'DELETE',
-    })
-    .then(response => response.json())
-    .then(data => {
-        tasks = data.tasks;
-        renderTasks();
-    })
-    .catch(error => console.error('Error deleting task:', error));
-}
+  function addTask() {
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+          const newTask = {
+              id: Date.now().toString(),
+              text: taskText,
+              completed: false,
+              timestamp: new Date().toISOString()
+          };
+          fetch('/tasks', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ task: newTask }),
+          })
+          .then(response => response.json())
+          .then(data => {
+              tasks = data.tasks;
+              renderTasks();
+              taskInput.value = '';
+              broadcastUpdate();
+          })
+          .catch(error => console.error('Error adding task:', error));
+      }
+  }
 
+  function toggleTask(taskId) {
+      const task = tasks.find(t => t.id === taskId);
+      if (task) {
+          task.completed = !task.completed;
+          fetch(`/tasks/${taskId}`, {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ completed: task.completed }),
+          })
+          .then(response => response.json())
+          .then(data => {
+              tasks = data.tasks;
+              renderTasks();
+              broadcastUpdate();
+          })
+          .catch(error => console.error('Error updating task:', error));
+      }
+  }
+
+  function deleteTask(taskId) {
+      fetch(`/tasks/${taskId}`, {
+          method: 'DELETE',
+      })
+      .then(response => response.json())
+      .then(data => {
+          tasks = data.tasks;
+          renderTasks();
+          broadcastUpdate();
+      })
+      .catch(error => console.error('Error deleting task:', error));
+  }
 function renderTasks() {
     taskList.innerHTML = '';
     tasks.forEach((task) => {
