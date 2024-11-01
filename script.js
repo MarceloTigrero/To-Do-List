@@ -15,8 +15,20 @@ function loadTasks() {
         })
         .catch(error => console.error('Error loading tasks:', error));
 }
-  // Create a broadcast channel
-  const todoChannel = new BroadcastChannel('todo-sync');
+  // Check if HTTPS is available
+  const isSecure = window.location.protocol === 'https:';
+
+  // Create broadcast channel with fallback
+  let todoChannel;
+  try {
+      todoChannel = new BroadcastChannel('todo-sync');
+  } catch (e) {
+      // Fallback for environments where BroadcastChannel is not available
+      todoChannel = {
+          postMessage: () => {},
+          onmessage: () => {}
+      };
+  }
 
   // Listen for messages from other tabs
   todoChannel.onmessage = (event) => {
